@@ -27,7 +27,7 @@ Installation
 
 .. code-block::
 
-    pip install stdplus-awsHelpers
+    pip install stdplusAwsHelpers
 
 Usage
 =====
