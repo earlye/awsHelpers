@@ -11,7 +11,7 @@ aws_config_dir = os.path.join(os.path.expanduser("~"), ".aws")
 
 class AwsConnectionFactory:
     instance = None
-    
+
     def __init__(self,credentials=None,profile='default'):
         if None == credentials:
             credentialsFilename = self.getAwsMfaCredentialsFilename(profile)
@@ -47,14 +47,14 @@ class AwsConnectionFactory:
 
         arn_file = os.path.join(aws_config_dir, arn_file_name)
 
-        print "arn_file:{} [profile:{}]".format(arn_file,profile)
+        print( "arn_file:{} [profile:{}]".format(arn_file,profile) )
         if os.access(arn_file,os.R_OK):
             return readfile(arn_file).strip()
         else:
             arn = self.load_arn_from_aws(profile)
             writefile(arn_file, arn)
             return arn
-    
+
     def _strConfig(self,config):
         result = ""
         for section,settings in config.items():
@@ -80,11 +80,11 @@ class AwsConnectionFactory:
             awsCredentials[profile]['aws_session_token'] = credentials['SessionToken']
         awsCredentials = self._strConfig(awsCredentials)
         writefile(self.getAwsCredentialsFilename(),awsCredentials)
-    
+
     def setMfaCredentials(self,credentials,profile='default'):
         self.storeAwsMfa(credentials,profile)
         self.storeAwsCredentials(credentials,profile + "-mfa");
-        
+
         self.credentials = credentials
         self.session = None
         self.profile = profile
@@ -107,13 +107,13 @@ class AwsConnectionFactory:
     @staticmethod
     def getAsgClient():
         return AwsConnectionFactory.instance._getAsgClient()
-    
+
     def _getAsgClient(self):
         return self.getSession().client('autoscaling')
 
     def getAsgResource(self):
         return self.getSession().resource('autoscaling')
-    
+
     def getCfResource(self):
         return self.getSession().resource('cloudformation')
 
@@ -127,7 +127,7 @@ class AwsConnectionFactory:
     @staticmethod
     def getEc2Client():
         return AwsConnectionFactory.instance._getEc2Client()
-    
+
     def _getEc2Client(self):
         return self.getSession().client('ec2')
 
@@ -137,11 +137,11 @@ class AwsConnectionFactory:
     @staticmethod
     def getIamClient():
         return AwsConnectionFactory.instance._getIamClient()
-    
+
     def _getIamClient(self):
         return self.getSession().client('iam')
 
-    
+
     def getS3Client(self):
         return self.getSession().client('s3')
 
@@ -154,7 +154,7 @@ class AwsConnectionFactory:
 
     def getS3Resource(self):
         return self.getSession().resource('s3')
-    
+
     def getProfile(self):
         return self.profile
 
