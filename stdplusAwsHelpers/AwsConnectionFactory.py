@@ -12,7 +12,7 @@ aws_config_dir = os.path.join(os.path.expanduser("~"), ".aws")
 class AwsConnectionFactory:
     instance = None
 
-    def __init__(self,credentials=None,profile='default'):
+    def __init__(self,credentials=None,profile='default',regionName=None):
         if None == credentials:
             credentialsFilename = self.getAwsMfaCredentialsFilename(profile)
             try:
@@ -24,10 +24,11 @@ class AwsConnectionFactory:
                 # print "WARN: ValueError reading credentials file:{}".format(credentialsFilename)
                 pass
         self.setMfaCredentials(credentials,profile)
+        self.regionName = regionName
 
     @staticmethod
-    def resetInstance(credentials=None,profile='default'):
-        AwsConnectionFactory.instance = AwsConnectionFactory(credentials,profile)
+    def resetInstance(credentials=None,profile='default', regionName=None):
+        AwsConnectionFactory.instance = AwsConnectionFactory(credentials,profile,regionName)
 
     def getAwsMfaCredentialsFilename(self,profile='default'):
         credentials_file_name = 'mfa_credentials'
@@ -93,13 +94,14 @@ class AwsConnectionFactory:
         if self.session == None:
             if self.credentials == None:
                 # print("Getting session w/ credentials from env")
-                self.session = boto3.session.Session()
+                self.session = boto3.session.Session(region_name=self.regionName)
             else:
                 # print("Getting session w/ credentials:")
                 # pprint(self.credentials)
                 self.session = boto3.session.Session(aws_access_key_id=self.credentials['AccessKeyId'],
                                                      aws_secret_access_key=self.credentials['SecretAccessKey'],
-                                                     aws_session_token=self.credentials['SessionToken'])
+                                                     aws_session_token=self.credentials['SessionToken'],
+                                                     region_name=self.regionName)
                 # print(self.session)
         # print "Session obtained"
         return self.session
