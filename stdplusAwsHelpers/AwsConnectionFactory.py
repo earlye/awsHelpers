@@ -48,7 +48,6 @@ class AwsConnectionFactory:
 
         arn_file = os.path.join(aws_config_dir, arn_file_name)
 
-        print( "arn_file:{} [profile:{}]".format(arn_file,profile) )
         if os.access(arn_file,os.R_OK):
             return readfile(arn_file).strip()
         else:
@@ -90,6 +89,9 @@ class AwsConnectionFactory:
         self.session = None
         self.profile = profile
 
+    def getProfile(self):
+        return self.profile
+
     def getSession(self):
         if self.session == None:
             if self.credentials == None:
@@ -106,11 +108,7 @@ class AwsConnectionFactory:
         # print "Session obtained"
         return self.session
 
-    @staticmethod
-    def getAsgClient():
-        return AwsConnectionFactory.instance._getAsgClient()
-
-    def _getAsgClient(self):
+    def getAsgClient(self):
         return self.getSession().client('autoscaling')
 
     def getAsgResource(self):
@@ -119,45 +117,32 @@ class AwsConnectionFactory:
     def getCfResource(self):
         return self.getSession().resource('cloudformation')
 
-    @staticmethod
-    def getCfClient():
-        return AwsConnectionFactory.instance._getCfClient()
-
-    def _getCfClient(self):
+    def getCfClient(self):
         return self.getSession().client('cloudformation')
 
-    @staticmethod
-    def getEc2Client():
-        return AwsConnectionFactory.instance._getEc2Client()
-
-    def _getEc2Client(self):
+    def getEc2Client(self):
         return self.getSession().client('ec2')
 
     def getEc2Resource(self):
         return self.getSession().resource('ec2')
 
-    @staticmethod
-    def getIamClient():
-        return AwsConnectionFactory.instance._getIamClient()
+    def getEksClient(self):
+        return self.getSession().client('eks')
 
-    def _getIamClient(self):
+    def getIamClient(self):
         return self.getSession().client('iam')
 
+    def getLogClient(self):
+        return self.getSession().client('logs')
+
+    def getRdsClient(self):
+        return self.getSession().client('rds')
 
     def getS3Client(self):
         return self.getSession().client('s3')
 
-    @staticmethod
-    def getLogClient():
-        return AwsConnectionFactory.instance._getLogClient()
-
-    def _getLogClient(self):
-        return self.getSession().client('logs')
-
     def getS3Resource(self):
         return self.getSession().resource('s3')
 
-    def getProfile(self):
-        return self.profile
 
 AwsConnectionFactory.instance = AwsConnectionFactory()

@@ -9,7 +9,7 @@ def describeInstances(ec2Client,InstanceIds):
         instanceId = instance['InstanceId']
         instances[instanceId]=instance
     return instances
-    
+
 def instanceIdsToPrivateIps(ec2Client,instanceIds):
     if instanceIds:
         instances = describeInstances(ec2Client,instanceIds)
